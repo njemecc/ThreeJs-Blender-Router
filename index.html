@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Router Model</title>
+  </head>
+  <body>
+    <canvas id="nasPrikaz"></canvas>
+    <script src="three.js"></script>
+    <script src="GLTFLoader.js"></script>
+
+    <script>
+      var renderer,
+        scene,
+        camera,
+        nasPrikaz = document.getElementById("nasPrikaz");
+
+      renderer = new THREE.WebGLRenderer({
+        canvas: nasPrikaz,
+        antialias: true,
+      });
+
+      renderer.setClearColor(0x000000);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      scene = new THREE.Scene();
+
+      /*         var tackaSvetlo = new THREE.PointLight(0xffffff, 0.3);
+        scene.add(tackaSvetlo); */
+
+      var svetlo = new THREE.AmbientLight(0xffffff, 0.4);
+      scene.add(svetlo);
+
+      var loader = new THREE.GLTFLoader();
+      loader.load("routerFinal.glb", handle_load);
+
+      var mesh;
+
+      function handle_load(gltf) {
+        console.log(gltf);
+        mesh = gltf.scene;
+        console.log(mesh.children[0]);
+        mesh.children[0].material = new THREE.MeshLambertMaterial();
+        scene.add(mesh);
+        mesh.position.z = -55;
+      }
+
+      render();
+      var delta = 0;
+      var prethodnoVreme = Date.now();
+
+      function render() {
+        delta += 0.01;
+        if (mesh) {
+          mesh.rotation.y += 0.01;
+        }
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+      }
+    </script>
+  </body>
+</html>
